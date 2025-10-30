@@ -1,67 +1,57 @@
 import React from 'react'
-import { useState } from 'react'
 import './ProblemInput.css'
 
-const ProblemInput = ({ onSolve, loading }) => {
-  const [problem, setProblem] = useState('')
-  const [examples] = useState([
-    '2x + 5 = 13',
-    '(8 + 4) * 3 - 2',
-    '1/2 + 1/3',
-    '25% of 200'
-  ])
+const ProblemInput = ({ problem, onProblemChange, onSolve, onClear }) => {
+  const examples = [
+    '2x + 5 = 15',
+    'x^2 - 5x + 6 = 0',
+    '3/4 + 2/3',
+    '15% of 200',
+    '(3 + 5) * 2 - 4'
+  ]
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    if (problem.trim()) {
-      onSolve(problem)
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      onSolve()
     }
   }
 
-  const handleExampleClick = (example) => {
-    setProblem(example)
-  }
-
   return (
-    <div className="problem-input-container">
-      <form onSubmit={handleSubmit} className="problem-form">
-        <div className="input-wrapper">
-          <textarea
-            value={problem}
-            onChange={(e) => setProblem(e.target.value)}
-            placeholder="输入你的数学问题，例如：2x + 5 = 13"
-            className="problem-textarea"
-            rows="3"
-            disabled={loading}
-          />
-          <button 
-            type="submit" 
-            className="solve-button"
-            disabled={!problem.trim() || loading}
-          >
-            {loading ? (
-              <span className="loading-spinner">⟳</span>
-            ) : (
-              '解答问题'
-            )}
-          </button>
-        </div>
-      </form>
+    <div className="problem-input">
+      <label htmlFor="problem">Enter Your Math Problem:</label>
+      <textarea
+        id="problem"
+        value={problem}
+        onChange={(e) => onProblemChange(e.target.value)}
+        onKeyPress={handleKeyPress}
+        placeholder="e.g., 2x + 5 = 15 or x^2 - 4x + 4 = 0"
+        rows="3"
+      />
       
-      <div className="examples-section">
-        <p className="examples-label">试试这些例子：</p>
-        <div className="examples-grid">
+      <div className="examples">
+        <span className="examples-label">Examples:</span>
+        <div className="examples-list">
           {examples.map((example, index) => (
             <button
               key={index}
-              onClick={() => handleExampleClick(example)}
-              className="example-button"
-              disabled={loading}
+              className="example-btn"
+              onClick={() => onProblemChange(example)}
+              title="Click to use this example"
             >
               {example}
             </button>
           ))}
         </div>
+      </div>
+
+      <div className="button-group">
+        <button className="solve-btn" onClick={onSolve}>
+          Solve Problem
+        </button>
+        <button className="clear-btn" onClick={onClear}>
+          Clear
+        </button>
       </div>
     </div>
   )

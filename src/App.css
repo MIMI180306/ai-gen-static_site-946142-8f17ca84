@@ -3,40 +3,32 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-.main-container {
-  max-width: 1400px;
+.main-content {
+  max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  display: grid;
-  grid-template-columns: 1fr 350px;
-  gap: 2rem;
-  align-items: start;
 }
 
-.solver-section {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+.solver-container {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  margin-bottom: 2rem;
+  backdrop-filter: blur(10px);
 }
 
-.history-section {
-  position: sticky;
-  top: 2rem;
-}
-
-@media (max-width: 1024px) {
-  .main-container {
-    grid-template-columns: 1fr;
-  }
-  
-  .history-section {
-    position: relative;
-    top: 0;
-  }
+.input-section {
+  margin-bottom: 2rem;
 }
 
 @media (max-width: 768px) {
-  .main-container {
+  .main-content {
     padding: 1rem;
+  }
+
+  .solver-container {
+    padding: 1.5rem;
+    border-radius: 15px;
   }
 }

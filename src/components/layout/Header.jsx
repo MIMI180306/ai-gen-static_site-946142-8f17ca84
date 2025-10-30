@@ -7,9 +7,9 @@ const Header = () => {
       <div className="header-content">
         <div className="logo">
           <span className="logo-icon">∑</span>
-          <h1>数学题解答器</h1>
+          <h1>Math Problem Solver</h1>
         </div>
-        <p className="tagline">Step-by-step solutions for every math problem</p>
+        <p className="tagline">Step-by-step solutions for all difficulty levels</p>
       </div>
     </header>
   )
