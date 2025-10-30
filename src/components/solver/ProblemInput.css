@@ -1,0 +1,130 @@
+.problem-input-container {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.problem-form {
+  margin-bottom: 1.5rem;
+}
+
+.input-wrapper {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.problem-textarea {
+  flex: 1;
+  padding: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 1rem;
+  resize: vertical;
+  min-height: 80px;
+  transition: all 0.3s ease;
+}
+
+.problem-textarea:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.problem-textarea:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.solve-button {
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  min-width: 120px;
+}
+
+.solve-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.solve-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.loading-spinner {
+  display: inline-block;
+  animation: spin 1s linear infinite;
+  font-size: 1.2rem;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.examples-section {
+  border-top: 1px solid #e0e0e0;
+  padding-top: 1.5rem;
+}
+
+.examples-label {
+  color: #666;
+  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+}
+
+.examples-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
+.example-button {
+  padding: 0.75rem 1rem;
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  color: #333;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.example-button:hover:not(:disabled) {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+  transform: translateY(-1px);
+}
+
+.example-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .problem-input-container {
+    padding: 1.5rem;
+  }
+  
+  .input-wrapper {
+    flex-direction: column;
+  }
+  
+  .solve-button {
+    width: 100%;
+  }
+  
+  .examples-grid {
+    grid-template-columns: 1fr;
+  }
+}
