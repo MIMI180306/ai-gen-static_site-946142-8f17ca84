@@ -1,28 +1,28 @@
 import React from 'react'
 import './DifficultySelector.css'
 
-const DifficultySelector = ({ difficulty, onSelect }) => {
+function DifficultySelector({ difficulty, onDifficultyChange }) {
   const levels = [
-    { value: 'easy', label: '简单', icon: '🟢', desc: '基础步骤' },
-    { value: 'medium', label: '中等', icon: '🟡', desc: '详细解释' },
-    { value: 'hard', label: '困难', icon: '🔴', desc: '完整推导' }
+    { value: 'easy', label: 'Easy', icon: '😊', description: 'Simple explanations' },
+    { value: 'medium', label: 'Medium', icon: '🤔', description: 'Detailed steps' },
+    { value: 'hard', label: 'Hard', icon: '🧠', description: 'In-depth analysis' }
   ]
 
   return (
     <div className="difficulty-selector">
-      <h3 className="selector-title">选择难度级别</h3>
-      <div className="difficulty-buttons">
+      <label className="difficulty-label">Difficulty Level:</label>
+      <div className="difficulty-options">
         {levels.map(level => (
           <button
             key={level.value}
             className={`difficulty-btn ${difficulty === level.value ? 'active' : ''}`}
-            onClick={() => onSelect(level.value)}
+            onClick={() => onDifficultyChange(level.value)}
           >
             <span className="difficulty-icon">{level.icon}</span>
-            <div className="difficulty-info">
-              <span className="difficulty-label">{level.label}</span>
-              <span className="difficulty-desc">{level.desc}</span>
-            </div>
+            <span className="difficulty-text">
+              <strong>{level.label}</strong>
+              <small>{level.description}</small>
+            </span>
           </button>
         ))}
       </div>

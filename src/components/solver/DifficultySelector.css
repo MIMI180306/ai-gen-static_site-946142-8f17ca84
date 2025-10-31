@@ -1,84 +1,75 @@
 .difficulty-selector {
-  background: white;
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
 }
 
-.selector-title {
+.difficulty-label {
+  display: block;
   font-size: 1.1rem;
+  font-weight: 600;
   color: #333;
   margin-bottom: 1rem;
-  font-weight: 600;
 }
 
-.difficulty-buttons {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.75rem;
+.difficulty-options {
+  display: flex;
+  gap: 1rem;
 }
 
 .difficulty-btn {
-  padding: 1rem;
-  background: #f8f9fa;
-  border: 2px solid #e0e0e0;
-  border-radius: 10px;
+  flex: 1;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s;
+  gap: 0.8rem;
+  padding: 1rem;
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  transition: all 0.3s ease;
 }
 
 .difficulty-btn:hover {
-  background: #e9ecef;
   border-color: #667eea;
-  transform: scale(1.05);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
 }
 
 .difficulty-btn.active {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-color: #667eea;
+  border-color: transparent;
   color: white;
 }
 
 .difficulty-icon {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
 }
 
-.difficulty-info {
+.difficulty-text {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.25rem;
+  align-items: flex-start;
+  text-align: left;
 }
 
-.difficulty-label {
-  font-weight: 600;
-  font-size: 0.95rem;
+.difficulty-text strong {
+  font-size: 1rem;
+  margin-bottom: 0.2rem;
 }
 
-.difficulty-desc {
-  font-size: 0.75rem;
+.difficulty-text small {
+  font-size: 0.85rem;
   opacity: 0.8;
 }
 
-.difficulty-btn.active .difficulty-label,
-.difficulty-btn.active .difficulty-desc {
-  color: white;
+.difficulty-btn.active .difficulty-text small {
+  opacity: 0.9;
 }
 
 @media (max-width: 768px) {
-  .difficulty-buttons {
-    grid-template-columns: 1fr;
+  .difficulty-options {
+    flex-direction: column;
   }
 
   .difficulty-btn {
-    flex-direction: row;
-    justify-content: flex-start;
-  }
-
-  .difficulty-info {
-    align-items: flex-start;
+    justify-content: center;
   }
 }

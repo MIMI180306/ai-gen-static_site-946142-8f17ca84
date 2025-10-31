@@ -1,12 +1,12 @@
 import React from 'react'
 import './Header.css'
 
-const Header = () => {
+function Header() {
   return (
     <header className="header">
       <div className="header-content">
-        <h1 className="header-title">🧮 数学题解答器</h1>
-        <p className="header-subtitle">输入数学问题，获取详细的分步解答</p>
+        <h1 className="header-title">🧮 Math Problem Solver</h1>
+        <p className="header-subtitle">Solve equations, fractions, percentages and more with detailed step-by-step solutions</p>
       </div>
     </header>
   )

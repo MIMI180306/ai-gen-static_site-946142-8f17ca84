@@ -1,66 +1,59 @@
 import React from 'react'
 import './ProblemInput.css'
 
-const ProblemInput = ({ problem, onChange, onSolve, onClear }) => {
+function ProblemInput({ problem, onProblemChange, onSolve, onClear, error }) {
   const examples = [
-    '2x + 5 = 13',
-    'x^2 - 5x + 6 = 0',
-    '3/4 + 2/3',
-    '25% of 80',
-    '123 + 456'
+    { label: 'Linear Equation', value: '2x + 5 = 13' },
+    { label: 'Quadratic Equation', value: 'x^2 - 5x + 6 = 0' },
+    { label: 'Fraction', value: '1/2 + 1/3' },
+    { label: 'Percentage', value: 'What is 20% of 150?' },
+    { label: 'Arithmetic', value: '25 * 4 + 10' }
   ]
 
-  const handleExampleClick = (example) => {
-    onChange(example)
-  }
-
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && e.ctrlKey) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
       onSolve()
     }
   }
 
   return (
-    <div className="problem-input-container">
+    <div className="problem-input">
       <div className="input-header">
-        <h2>输入问题</h2>
-        <span className="input-hint">支持方程、算术、分数、百分比等</span>
-      </div>
-
-      <textarea
-        className="problem-input"
-        value={problem}
-        onChange={(e) => onChange(e.target.value)}
-        onKeyPress={handleKeyPress}
-        placeholder="例如: 2x + 5 = 13 或 x^2 - 5x + 6 = 0"
-        rows="4"
-      />
-
-      <div className="examples-section">
-        <p className="examples-title">示例问题：</p>
-        <div className="examples-grid">
+        <label className="input-label">Enter your math problem:</label>
+        <div className="example-buttons">
           {examples.map((example, index) => (
             <button
               key={index}
-              className="example-button"
-              onClick={() => handleExampleClick(example)}
+              className="example-btn"
+              onClick={() => onProblemChange(example.value)}
+              title={`Try: ${example.value}`}
             >
-              {example}
+              {example.label}
             </button>
           ))}
         </div>
       </div>
-
+      
+      <textarea
+        className="problem-textarea"
+        value={problem}
+        onChange={(e) => onProblemChange(e.target.value)}
+        onKeyPress={handleKeyPress}
+        placeholder="Example: 2x + 5 = 13\nOr: What is 20% of 150?\nOr: 1/2 + 1/3"
+        rows="4"
+      />
+      
+      {error && <div className="error-message">{error}</div>}
+      
       <div className="input-actions">
-        <button className="solve-button" onClick={onSolve}>
-          <span>🚀</span> 解答问题
+        <button className="btn btn-primary" onClick={onSolve}>
+          🔍 Solve Problem
         </button>
-        <button className="clear-button" onClick={onClear}>
-          <span>🗑️</span> 清除
+        <button className="btn btn-secondary" onClick={onClear}>
+          🗑️ Clear
         </button>
       </div>
-
-      <p className="keyboard-hint">💡 提示：按 Ctrl + Enter 快速解答</p>
     </div>
   )
 }
