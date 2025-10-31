@@ -1,22 +1,25 @@
 /**
- * Solve math problems with step-by-step explanations
- * @param {string} problem - The math problem to solve
- * @param {string} difficulty - Difficulty level: easy, medium, hard
- * @returns {object} Solution with steps and answer
+ * 数学问题求解器
+ * 支持多种类型的数学问题求解
  */
-export function solveProblem(problem, difficulty) {
+
+/**
+ * 主要求解函数
+ * @param {string} problem - 数学问题
+ * @param {string} difficulty - 难度级别 (easy/medium/hard)
+ * @returns {object} 包含解题步骤和答案的对象
+ */
+export const solveProblem = (problem, difficulty) => {
   const trimmedProblem = problem.trim()
-  
-  // Detect problem type
-  if (trimmedProblem.includes('=') && trimmedProblem.includes('x')) {
-    if (trimmedProblem.includes('^2') || trimmedProblem.includes('x²')) {
-      return solveQuadraticEquation(trimmedProblem, difficulty)
-    } else {
-      return solveLinearEquation(trimmedProblem, difficulty)
-    }
-  } else if (trimmedProblem.includes('/') && !trimmedProblem.includes('(')) {
+
+  // 检测问题类型
+  if (trimmedProblem.includes('=') && !trimmedProblem.includes('^2')) {
+    return solveLinearEquation(trimmedProblem, difficulty)
+  } else if (trimmedProblem.includes('^2') || trimmedProblem.includes('x²')) {
+    return solveQuadraticEquation(trimmedProblem, difficulty)
+  } else if (trimmedProblem.includes('/') && trimmedProblem.split('/').length === 2) {
     return solveFraction(trimmedProblem, difficulty)
-  } else if (trimmedProblem.includes('%')) {
+  } else if (trimmedProblem.includes('%') || trimmedProblem.toLowerCase().includes('of')) {
     return solvePercentage(trimmedProblem, difficulty)
   } else {
     return solveArithmetic(trimmedProblem, difficulty)
@@ -24,329 +27,536 @@ export function solveProblem(problem, difficulty) {
 }
 
 /**
- * Solve linear equations (e.g., 2x + 5 = 15)
+ * 求解一元一次方程
  */
-function solveLinearEquation(problem, difficulty) {
+const solveLinearEquation = (problem, difficulty) => {
   try {
+    // 解析方程 ax + b = c
     const [left, right] = problem.split('=')
     const rightValue = parseFloat(right.trim())
-    
-    // Parse left side
-    const match = left.match(/([+-]?\d*)x([+-]?\d+)?/)
-    if (!match) throw new Error('Invalid equation format')
-    
-    const coefficient = match[1] === '' || match[1] === '+' ? 1 : match[1] === '-' ? -1 : parseFloat(match[1])
-    const constant = match[2] ? parseFloat(match[2]) : 0
-    
-    const x = (rightValue - constant) / coefficient
-    
-    const steps = []
-    
-    if (difficulty === 'hard') {
-      steps.push({
-        label: 'Original Equation',
-        formula: problem,
-        explanation: 'We start with the given equation and need to isolate x.'
-      })
-    }
-    
-    if (constant !== 0) {
-      const newRight = rightValue - constant
-      steps.push({
-        label: 'Subtract constant from both sides',
-        formula: `${coefficient}x = ${newRight}`,
-        explanation: difficulty === 'easy' 
-          ? `Subtract ${constant} from both sides` 
-          : `To isolate the term with x, we subtract ${constant} from both sides of the equation. This gives us ${coefficient}x = ${newRight}.`
-      })
-    }
-    
-    steps.push({
-      label: 'Divide both sides by coefficient',
-      formula: `x = ${x}`,
-      explanation: difficulty === 'easy'
-        ? `Divide both sides by ${coefficient}`
-        : `Now we divide both sides by ${coefficient} to solve for x. This gives us x = ${x}.`
+
+    // 提取系数
+    let a = 0, b = 0
+    const terms = left.replace(/\s/g, '').split(/(?=[+-])/)
+
+    terms.forEach(term => {
+      if (term.includes('x')) {
+        const coef = term.replace('x', '')
+        a += coef === '' || coef === '+' ? 1 : coef === '-' ? -1 : parseFloat(coef)
+      } else {
+        b += parseFloat(term) || 0
+      }
     })
-    
-    if (difficulty === 'hard') {
+
+    const x = (rightValue - b) / a
+
+    const steps = []
+
+    if (difficulty === 'easy') {
       steps.push({
-        label: 'Verification',
-        formula: `${coefficient}(${x}) + ${constant} = ${rightValue}`,
-        explanation: `Let's verify: substituting x = ${x} into the original equation gives us ${coefficient * x + constant} = ${rightValue}, which is correct.`
+        formula: `${problem}`,
+        explanation: '原方程'
+      })
+      steps.push({
+        formula: `x = ${x}`,
+        explanation: '求解得到答案'
+      })
+    } else if (difficulty === 'medium') {
+      steps.push({
+        formula: problem,
+        explanation: '原方程'
+      })
+      steps.push({
+        formula: `${a}x = ${rightValue} - (${b})`,
+        explanation: `将常数项移到等式右边`
+      })
+      steps.push({
+        formula: `${a}x = ${rightValue - b}`,
+        explanation: '计算右边的值'
+      })
+      steps.push({
+        formula: `x = ${rightValue - b} ÷ ${a}`,
+        explanation: `两边同时除以 ${a}`
+      })
+      steps.push({
+        formula: `x = ${x}`,
+        explanation: '得到最终答案'
+      })
+    } else {
+      steps.push({
+        formula: problem,
+        explanation: '给定的一元一次方程'
+      })
+      steps.push({
+        formula: `${a}x + ${b} = ${rightValue}`,
+        explanation: `标准形式：系数a=${a}，常数b=${b}`
+      })
+      steps.push({
+        formula: `${a}x = ${rightValue} - (${b})`,
+        explanation: `移项：将常数项${b}移到等式右边，符号相反`
+      })
+      steps.push({
+        formula: `${a}x = ${rightValue - b}`,
+        explanation: `合并同类项：${rightValue} - (${b}) = ${rightValue - b}`
+      })
+      steps.push({
+        formula: `x = ${rightValue - b} ÷ ${a}`,
+        explanation: `系数化为1：两边同时除以x的系数${a}`
+      })
+      steps.push({
+        formula: `x = ${x}`,
+        explanation: `计算得到最终解`
+      })
+      steps.push({
+        formula: `验证：${a}×${x} + ${b} = ${a * x + b} = ${rightValue}`,
+        explanation: '将解代入原方程验证，等式成立'
       })
     }
-    
+
     return {
-      type: 'Linear Equation',
-      steps: steps,
+      type: '一元一次方程',
+      steps,
       answer: `x = ${x}`
     }
   } catch (error) {
     return {
-      error: 'Unable to solve this linear equation. Please check the format (e.g., 2x + 5 = 15)'
+      type: '解析错误',
+      steps: [{
+        formula: problem,
+        explanation: '无法解析该方程，请检查格式'
+      }],
+      answer: '解析失败'
     }
   }
 }
 
 /**
- * Solve quadratic equations (e.g., x^2 - 5x + 6 = 0)
+ * 求解一元二次方程
  */
-function solveQuadraticEquation(problem, difficulty) {
+const solveQuadraticEquation = (problem, difficulty) => {
   try {
     const normalized = problem.replace('x²', 'x^2')
     const [left] = normalized.split('=')
-    
-    // Parse coefficients
-    const aMatch = left.match(/([+-]?\d*)x\^2/)
-    const bMatch = left.match(/([+-]\d+)x(?!\^)/)
-    const cMatch = left.match(/([+-]?\d+)(?!x)/g)
-    
-    const a = aMatch ? (aMatch[1] === '' || aMatch[1] === '+' ? 1 : aMatch[1] === '-' ? -1 : parseFloat(aMatch[1])) : 0
-    const b = bMatch ? parseFloat(bMatch[1]) : 0
-    const c = cMatch ? parseFloat(cMatch[cMatch.length - 1]) : 0
-    
+
+    // 提取系数 ax^2 + bx + c = 0
+    let a = 0, b = 0, c = 0
+    const terms = left.replace(/\s/g, '').split(/(?=[+-])/)
+
+    terms.forEach(term => {
+      if (term.includes('x^2')) {
+        const coef = term.replace('x^2', '')
+        a += coef === '' || coef === '+' ? 1 : coef === '-' ? -1 : parseFloat(coef)
+      } else if (term.includes('x')) {
+        const coef = term.replace('x', '')
+        b += coef === '' || coef === '+' ? 1 : coef === '-' ? -1 : parseFloat(coef)
+      } else {
+        c += parseFloat(term) || 0
+      }
+    })
+
     const discriminant = b * b - 4 * a * c
-    
+    const x1 = (-b + Math.sqrt(discriminant)) / (2 * a)
+    const x2 = (-b - Math.sqrt(discriminant)) / (2 * a)
+
     const steps = []
-    
-    if (difficulty === 'hard') {
+
+    if (difficulty === 'easy') {
       steps.push({
-        label: 'Identify coefficients',
-        formula: `a = ${a}, b = ${b}, c = ${c}`,
-        explanation: `For a quadratic equation ax² + bx + c = 0, we identify the coefficients from the given equation.`
+        formula: problem,
+        explanation: '原方程'
+      })
+      steps.push({
+        formula: `x₁ = ${x1.toFixed(2)}, x₂ = ${x2.toFixed(2)}`,
+        explanation: '使用求根公式求解'
+      })
+    } else if (difficulty === 'medium') {
+      steps.push({
+        formula: problem,
+        explanation: '一元二次方程'
+      })
+      steps.push({
+        formula: `a=${a}, b=${b}, c=${c}`,
+        explanation: '识别系数'
+      })
+      steps.push({
+        formula: `Δ = b² - 4ac = ${b}² - 4×${a}×${c} = ${discriminant}`,
+        explanation: '计算判别式'
+      })
+      steps.push({
+        formula: `x = (-b ± √Δ) / 2a`,
+        explanation: '应用求根公式'
+      })
+      steps.push({
+        formula: `x₁ = ${x1.toFixed(2)}, x₂ = ${x2.toFixed(2)}`,
+        explanation: '计算两个根'
+      })
+    } else {
+      steps.push({
+        formula: problem,
+        explanation: '给定的一元二次方程'
+      })
+      steps.push({
+        formula: `${a}x² + ${b}x + ${c} = 0`,
+        explanation: `标准形式：a=${a}, b=${b}, c=${c}`
+      })
+      steps.push({
+        formula: `Δ = b² - 4ac`,
+        explanation: '判别式公式，用于判断根的性质'
+      })
+      steps.push({
+        formula: `Δ = ${b}² - 4×${a}×${c} = ${b * b} - ${4 * a * c} = ${discriminant}`,
+        explanation: '代入计算判别式的值'
+      })
+      if (discriminant > 0) {
+        steps.push({
+          formula: `Δ > 0`,
+          explanation: '判别式大于0，方程有两个不相等的实数根'
+        })
+      } else if (discriminant === 0) {
+        steps.push({
+          formula: `Δ = 0`,
+          explanation: '判别式等于0，方程有两个相等的实数根'
+        })
+      }
+      steps.push({
+        formula: `x = (-b ± √Δ) / (2a)`,
+        explanation: '一元二次方程的求根公式'
+      })
+      steps.push({
+        formula: `x = (${-b} ± √${discriminant}) / ${2 * a}`,
+        explanation: '代入a, b和判别式的值'
+      })
+      steps.push({
+        formula: `x₁ = (${-b} + ${Math.sqrt(discriminant).toFixed(2)}) / ${2 * a} = ${x1.toFixed(2)}`,
+        explanation: '计算第一个根（取加号）'
+      })
+      steps.push({
+        formula: `x₂ = (${-b} - ${Math.sqrt(discriminant).toFixed(2)}) / ${2 * a} = ${x2.toFixed(2)}`,
+        explanation: '计算第二个根（取减号）'
       })
     }
-    
-    steps.push({
-      label: 'Calculate discriminant',
-      formula: `Δ = b² - 4ac = ${b}² - 4(${a})(${c}) = ${discriminant}`,
-      explanation: difficulty === 'easy'
-        ? 'Calculate discriminant using b² - 4ac'
-        : `The discriminant helps us determine the nature of the roots. We calculate it using the formula Δ = b² - 4ac.`
-    })
-    
-    if (discriminant < 0) {
-      return {
-        type: 'Quadratic Equation',
-        steps: steps,
-        answer: 'No real solutions (discriminant < 0)'
-      }
-    }
-    
-    const sqrtDiscriminant = Math.sqrt(discriminant)
-    const x1 = (-b + sqrtDiscriminant) / (2 * a)
-    const x2 = (-b - sqrtDiscriminant) / (2 * a)
-    
-    steps.push({
-      label: 'Apply quadratic formula',
-      formula: `x = (-b ± √Δ) / 2a = (${-b} ± ${sqrtDiscriminant.toFixed(2)}) / ${2 * a}`,
-      explanation: difficulty === 'easy'
-        ? 'Use quadratic formula to find solutions'
-        : `We use the quadratic formula x = (-b ± √Δ) / 2a to find the two possible values of x.`
-    })
-    
-    steps.push({
-      label: 'Calculate solutions',
-      formula: `x₁ = ${x1.toFixed(2)}, x₂ = ${x2.toFixed(2)}`,
-      explanation: `The two solutions are x₁ = ${x1.toFixed(2)} and x₂ = ${x2.toFixed(2)}.`
-    })
-    
+
     return {
-      type: 'Quadratic Equation',
-      steps: steps,
-      answer: x1 === x2 ? `x = ${x1.toFixed(2)}` : `x₁ = ${x1.toFixed(2)}, x₂ = ${x2.toFixed(2)}`
+      type: '一元二次方程',
+      steps,
+      answer: `x₁ = ${x1.toFixed(2)}, x₂ = ${x2.toFixed(2)}`
     }
   } catch (error) {
     return {
-      error: 'Unable to solve this quadratic equation. Please check the format (e.g., x^2 - 5x + 6 = 0)'
+      type: '解析错误',
+      steps: [{
+        formula: problem,
+        explanation: '无法解析该方程，请检查格式'
+      }],
+      answer: '解析失败'
     }
   }
 }
 
 /**
- * Solve fraction operations
+ * 求解分数运算
  */
-function solveFraction(problem, difficulty) {
+const solveFraction = (problem, difficulty) => {
   try {
-    const parts = problem.match(/(\d+)\/(\d+)\s*([+\-*])\s*(\d+)\/(\d+)/)
-    if (!parts) throw new Error('Invalid fraction format')
-    
-    const [, num1, den1, operator, num2, den2] = parts
-    const n1 = parseInt(num1), d1 = parseInt(den1)
-    const n2 = parseInt(num2), d2 = parseInt(den2)
-    
+    const parts = problem.split('/')
+    if (parts.length !== 2) {
+      throw new Error('Invalid fraction format')
+    }
+
+    const numerator = parseFloat(parts[0].trim())
+    const denominator = parseFloat(parts[1].trim())
+    const result = numerator / denominator
+
     const steps = []
-    let resultNum, resultDen
-    
-    if (operator === '+' || operator === '-') {
-      const lcm = (d1 * d2) / gcd(d1, d2)
-      const newN1 = n1 * (lcm / d1)
-      const newN2 = n2 * (lcm / d2)
-      
-      if (difficulty !== 'easy') {
+
+    if (difficulty === 'easy') {
+      steps.push({
+        formula: problem,
+        explanation: '分数除法'
+      })
+      steps.push({
+        formula: `= ${result.toFixed(4)}`,
+        explanation: '计算结果'
+      })
+    } else if (difficulty === 'medium') {
+      steps.push({
+        formula: problem,
+        explanation: '分数形式'
+      })
+      steps.push({
+        formula: `${numerator} ÷ ${denominator}`,
+        explanation: '转换为除法'
+      })
+      steps.push({
+        formula: `= ${result.toFixed(4)}`,
+        explanation: '执行除法运算'
+      })
+    } else {
+      steps.push({
+        formula: problem,
+        explanation: '给定的分数'
+      })
+      steps.push({
+        formula: `分子 = ${numerator}, 分母 = ${denominator}`,
+        explanation: '识别分数的组成部分'
+      })
+      steps.push({
+        formula: `${numerator} ÷ ${denominator}`,
+        explanation: '分数表示分子除以分母'
+      })
+      steps.push({
+        formula: `= ${result.toFixed(4)}`,
+        explanation: '执行除法运算得到小数形式'
+      })
+      if (result % 1 === 0) {
         steps.push({
-          label: 'Find common denominator',
-          formula: `LCM(${d1}, ${d2}) = ${lcm}`,
-          explanation: difficulty === 'medium'
-            ? 'Find least common multiple for denominators'
-            : `To add or subtract fractions, we need a common denominator. The least common multiple of ${d1} and ${d2} is ${lcm}.`
+          formula: `= ${result}`,
+          explanation: '结果为整数'
+        })
+      }
+    }
+
+    return {
+      type: '分数运算',
+      steps,
+      answer: result % 1 === 0 ? `${result}` : result.toFixed(4)
+    }
+  } catch (error) {
+    return {
+      type: '解析错误',
+      steps: [{
+        formula: problem,
+        explanation: '无法解析该分数，请使用格式：分子/分母'
+      }],
+      answer: '解析失败'
+    }
+  }
+}
+
+/**
+ * 求解百分比问题
+ */
+const solvePercentage = (problem, difficulty) => {
+  try {
+    const lowerProblem = problem.toLowerCase()
+    let percentage, number, result
+
+    if (lowerProblem.includes('of')) {
+      // 格式: 25% of 80
+      const parts = lowerProblem.split('of')
+      percentage = parseFloat(parts[0].replace('%', '').trim())
+      number = parseFloat(parts[1].trim())
+      result = (percentage / 100) * number
+    } else {
+      // 简单百分比
+      percentage = parseFloat(problem.replace('%', '').trim())
+      result = percentage / 100
+    }
+
+    const steps = []
+
+    if (difficulty === 'easy') {
+      steps.push({
+        formula: problem,
+        explanation: '百分比问题'
+      })
+      steps.push({
+        formula: `= ${result}`,
+        explanation: '计算结果'
+      })
+    } else if (difficulty === 'medium') {
+      if (lowerProblem.includes('of')) {
+        steps.push({
+          formula: problem,
+          explanation: '百分比乘法'
+        })
+        steps.push({
+          formula: `${percentage}% × ${number}`,
+          explanation: '转换为乘法'
+        })
+        steps.push({
+          formula: `${percentage / 100} × ${number}`,
+          explanation: '百分比转小数'
+        })
+        steps.push({
+          formula: `= ${result}`,
+          explanation: '执行乘法'
+        })
+      } else {
+        steps.push({
+          formula: problem,
+          explanation: '百分比转换'
+        })
+        steps.push({
+          formula: `${percentage} ÷ 100`,
+          explanation: '除以100'
+        })
+        steps.push({
+          formula: `= ${result}`,
+          explanation: '得到小数形式'
+        })
+      }
+    } else {
+      if (lowerProblem.includes('of')) {
+        steps.push({
+          formula: problem,
+          explanation: '求某数的百分之几'
+        })
+        steps.push({
+          formula: `百分比 = ${percentage}%, 基数 = ${number}`,
+          explanation: '识别问题中的百分比和基数'
+        })
+        steps.push({
+          formula: `${percentage}% = ${percentage} / 100 = ${percentage / 100}`,
+          explanation: '将百分比转换为小数（除以100）'
+        })
+        steps.push({
+          formula: `${percentage / 100} × ${number}`,
+          explanation: '用小数形式乘以基数'
+        })
+        steps.push({
+          formula: `= ${result}`,
+          explanation: '执行乘法运算得到最终结果'
+        })
+        steps.push({
+          formula: `答案：${number}的${percentage}%是${result}`,
+          explanation: '结论'
+        })
+      } else {
+        steps.push({
+          formula: problem,
+          explanation: '百分比转小数'
+        })
+        steps.push({
+          formula: `百分比的定义：表示一个数是另一个数的百分之几`,
+          explanation: '概念说明'
+        })
+        steps.push({
+          formula: `${percentage}% = ${percentage} ÷ 100`,
+          explanation: '百分比转小数的方法：除以100'
+        })
+        steps.push({
+          formula: `= ${result}`,
+          explanation: '计算得到小数形式'
+        })
+      }
+    }
+
+    return {
+      type: '百分比计算',
+      steps,
+      answer: `${result}`
+    }
+  } catch (error) {
+    return {
+      type: '解析错误',
+      steps: [{
+        formula: problem,
+        explanation: '无法解析该百分比问题'
+      }],
+      answer: '解析失败'
+    }
+  }
+}
+
+/**
+ * 求解基本算术运算
+ */
+const solveArithmetic = (problem, difficulty) => {
+  try {
+    const result = eval(problem.replace(/×/g, '*').replace(/÷/g, '/'))
+
+    const steps = []
+
+    if (difficulty === 'easy') {
+      steps.push({
+        formula: problem,
+        explanation: '算术运算'
+      })
+      steps.push({
+        formula: `= ${result}`,
+        explanation: '计算结果'
+      })
+    } else if (difficulty === 'medium') {
+      steps.push({
+        formula: problem,
+        explanation: '给定的算术表达式'
+      })
+      const normalized = problem.replace(/×/g, '*').replace(/÷/g, '/')
+      if (normalized !== problem) {
+        steps.push({
+          formula: normalized,
+          explanation: '转换为标准运算符'
+        })
+      }
+      steps.push({
+        formula: `= ${result}`,
+        explanation: '按照运算优先级计算'
+      })
+    } else {
+      steps.push({
+        formula: problem,
+        explanation: '给定的算术表达式'
+      })
+      steps.push({
+        formula: '运算优先级：括号 > 乘除 > 加减',
+        explanation: '算术运算的基本规则'
+      })
+      const normalized = problem.replace(/×/g, '*').replace(/÷/g, '/')
+      if (normalized !== problem) {
+        steps.push({
+          formula: normalized,
+          explanation: '将运算符转换为标准形式'
         })
       }
       
-      steps.push({
-        label: 'Convert to common denominator',
-        formula: `${num1}/${den1} = ${newN1}/${lcm}, ${num2}/${den2} = ${newN2}/${lcm}`,
-        explanation: `Convert both fractions to have denominator ${lcm}.`
-      })
+      // 尝试分解步骤
+      if (problem.includes('+') || problem.includes('-')) {
+        const parts = problem.split(/([+\-])/)
+        let runningTotal = parseFloat(parts[0])
+        steps.push({
+          formula: `第一项 = ${parts[0]}`,
+          explanation: '从左到右依次计算'
+        })
+        for (let i = 1; i < parts.length; i += 2) {
+          const operator = parts[i]
+          const operand = parseFloat(parts[i + 1])
+          const prevTotal = runningTotal
+          if (operator === '+') {
+            runningTotal += operand
+            steps.push({
+              formula: `${prevTotal} + ${operand} = ${runningTotal}`,
+              explanation: `加上 ${operand}`
+            })
+          } else {
+            runningTotal -= operand
+            steps.push({
+              formula: `${prevTotal} - ${operand} = ${runningTotal}`,
+              explanation: `减去 ${operand}`
+            })
+          }
+        }
+      }
       
-      resultNum = operator === '+' ? newN1 + newN2 : newN1 - newN2
-      resultDen = lcm
-      
       steps.push({
-        label: operator === '+' ? 'Add numerators' : 'Subtract numerators',
-        formula: `${newN1} ${operator} ${newN2} = ${resultNum}`,
-        explanation: `${operator === '+' ? 'Add' : 'Subtract'} the numerators while keeping the common denominator.`
-      })
-    } else {
-      resultNum = n1 * n2
-      resultDen = d1 * d2
-      
-      steps.push({
-        label: 'Multiply numerators and denominators',
-        formula: `(${n1} × ${n2}) / (${d1} × ${d2}) = ${resultNum}/${resultDen}`,
-        explanation: 'Multiply the numerators together and denominators together.'
+        formula: `= ${result}`,
+        explanation: '最终结果'
       })
     }
-    
-    const divisor = gcd(resultNum, resultDen)
-    const simplifiedNum = resultNum / divisor
-    const simplifiedDen = resultDen / divisor
-    
-    if (divisor > 1) {
-      steps.push({
-        label: 'Simplify',
-        formula: `${resultNum}/${resultDen} = ${simplifiedNum}/${simplifiedDen}`,
-        explanation: `Divide both numerator and denominator by their GCD (${divisor}) to simplify.`
-      })
-    }
-    
+
     return {
-      type: 'Fraction Operation',
-      steps: steps,
-      answer: simplifiedDen === 1 ? `${simplifiedNum}` : `${simplifiedNum}/${simplifiedDen}`
+      type: '算术运算',
+      steps,
+      answer: `${result}`
     }
   } catch (error) {
     return {
-      error: 'Unable to solve this fraction problem. Please check the format (e.g., 3/4 + 2/3)'
-    }
-  }
-}
-
-/**
- * Solve percentage problems
- */
-function solvePercentage(problem, difficulty) {
-  try {
-    const match = problem.match(/(\d+)%\s*of\s*(\d+)/)
-    if (!match) throw new Error('Invalid percentage format')
-    
-    const [, percentage, number] = match
-    const percent = parseFloat(percentage)
-    const num = parseFloat(number)
-    
-    const result = (percent / 100) * num
-    
-    const steps = []
-    
-    if (difficulty === 'hard') {
-      steps.push({
-        label: 'Understanding the problem',
-        formula: `${percent}% of ${num}`,
-        explanation: `We need to find ${percent}% of ${num}. Percent means "per hundred", so ${percent}% equals ${percent}/100.`
-      })
-    }
-    
-    steps.push({
-      label: 'Convert percentage to decimal',
-      formula: `${percent}% = ${percent}/100 = ${percent / 100}`,
-      explanation: difficulty === 'easy'
-        ? 'Convert percentage to decimal'
-        : `To convert a percentage to decimal, we divide by 100. So ${percent}% becomes ${percent / 100}.`
-    })
-    
-    steps.push({
-      label: 'Multiply by the number',
-      formula: `${percent / 100} × ${num} = ${result}`,
-      explanation: `Multiply the decimal by ${num} to get the answer.`
-    })
-    
-    return {
-      type: 'Percentage Calculation',
-      steps: steps,
-      answer: result.toString()
-    }
-  } catch (error) {
-    return {
-      error: 'Unable to solve this percentage problem. Please check the format (e.g., 15% of 200)'
-    }
-  }
-}
-
-/**
- * Solve arithmetic expressions
- */
-function solveArithmetic(problem, difficulty) {
-  try {
-    const result = eval(problem)
-    
-    const steps = []
-    
-    if (difficulty === 'hard') {
-      steps.push({
-        label: 'Original expression',
+      type: '解析错误',
+      steps: [{
         formula: problem,
-        explanation: 'We need to evaluate this arithmetic expression following the order of operations (PEMDAS/BODMAS).'
-      })
-    }
-    
-    if (problem.includes('(')) {
-      steps.push({
-        label: 'Evaluate parentheses first',
-        explanation: difficulty === 'easy'
-          ? 'Calculate values inside parentheses'
-          : 'According to order of operations, we evaluate expressions inside parentheses first.'
-      })
-    }
-    
-    if (problem.includes('*') || problem.includes('/')) {
-      steps.push({
-        label: 'Perform multiplication/division',
-        explanation: 'Multiplication and division are performed from left to right.'
-      })
-    }
-    
-    steps.push({
-      label: 'Final calculation',
-      formula: `= ${result}`,
-      explanation: `The final result is ${result}.`
-    })
-    
-    return {
-      type: 'Arithmetic Expression',
-      steps: steps,
-      answer: result.toString()
-    }
-  } catch (error) {
-    return {
-      error: 'Unable to evaluate this expression. Please check the format.'
+        explanation: '无法解析该算术表达式'
+      }],
+      answer: '解析失败'
     }
   }
-}
-
-/**
- * Calculate greatest common divisor
- */
-function gcd(a, b) {
-  return b === 0 ? Math.abs(a) : gcd(b, a % b)
 }

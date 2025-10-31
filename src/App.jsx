@@ -1,45 +1,43 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { useState } from 'react'
+import './App.css'
 import Header from './components/layout/Header'
 import ProblemInput from './components/solver/ProblemInput'
 import SolutionDisplay from './components/solver/SolutionDisplay'
 import DifficultySelector from './components/solver/DifficultySelector'
 import HistoryPanel from './components/solver/HistoryPanel'
 import { solveProblem } from './utils/mathSolver'
-import './App.css'
 
 function App() {
   const [problem, setProblem] = useState('')
-  const [difficulty, setDifficulty] = useState('medium')
   const [solution, setSolution] = useState(null)
-  const [history, setHistory] = useState([])
+  const [difficulty, setDifficulty] = useState('medium')
+  const [history, setHistory] = useState(() => {
+    const saved = localStorage.getItem('mathHistory')
+    return saved ? JSON.parse(saved) : []
+  })
 
   const handleSolve = () => {
     if (!problem.trim()) {
-      alert('Please enter a math problem')
+      alert('请输入一个数学问题')
       return
     }
 
     const result = solveProblem(problem, difficulty)
     setSolution(result)
 
-    // Add to history
     const newHistory = [
       {
-        id: Date.now(),
-        problem: problem,
-        difficulty: difficulty,
-        timestamp: new Date().toLocaleString(),
-        result: result
+        problem,
+        solution: result,
+        difficulty,
+        timestamp: new Date().toISOString()
       },
-      ...history.slice(0, 9)
-    ]
-    setHistory(newHistory)
-  }
+      ...history
+    ].slice(0, 10)
 
-  const handleLoadHistory = (item) => {
-    setProblem(item.problem)
-    setDifficulty(item.difficulty)
-    setSolution(item.result)
+    setHistory(newHistory)
+    localStorage.setItem('mathHistory', JSON.stringify(newHistory))
   }
 
   const handleClear = () => {
@@ -47,36 +45,43 @@ function App() {
     setSolution(null)
   }
 
+  const handleLoadHistory = (item) => {
+    setProblem(item.problem)
+    setSolution(item.solution)
+    setDifficulty(item.difficulty)
+  }
+
   return (
     <div className="app">
       <Header />
+      
       <main className="main-content">
         <div className="solver-container">
-          <div className="input-section">
+          <div className="left-panel">
             <DifficultySelector 
               difficulty={difficulty} 
-              onDifficultyChange={setDifficulty} 
+              onSelect={setDifficulty} 
             />
-            <ProblemInput 
+            
+            <ProblemInput
               problem={problem}
-              onProblemChange={setProblem}
+              onChange={setProblem}
               onSolve={handleSolve}
               onClear={handleClear}
             />
-          </div>
-          
-          {solution && (
-            <SolutionDisplay solution={solution} />
-          )}
-        </div>
 
-        {history.length > 0 && (
-          <HistoryPanel 
-            history={history}
-            onLoadHistory={handleLoadHistory}
-            onClearHistory={() => setHistory([])}
-          />
-        )}
+            {solution && (
+              <SolutionDisplay solution={solution} />
+            )}
+          </div>
+
+          <div className="right-panel">
+            <HistoryPanel 
+              history={history}
+              onLoad={handleLoadHistory}
+            />
+          </div>
+        </div>
       </main>
     </div>
   )

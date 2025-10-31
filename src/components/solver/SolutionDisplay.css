@@ -1,9 +1,9 @@
 .solution-display {
-  background: #f8f9fa;
-  border-radius: 15px;
+  background: white;
+  border-radius: 16px;
   padding: 2rem;
-  margin-top: 2rem;
-  animation: slideIn 0.5s ease-out;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  animation: slideIn 0.4s ease-out;
 }
 
 @keyframes slideIn {
@@ -17,135 +17,102 @@
   }
 }
 
-.solution-title {
-  font-size: 1.8rem;
-  color: #333;
-  margin-bottom: 1.5rem;
-  border-bottom: 3px solid #667eea;
-  padding-bottom: 0.5rem;
-}
-
-.error-message {
+.solution-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 1rem;
-  background: #fff3cd;
-  border: 2px solid #ffc107;
-  border-radius: 10px;
-  padding: 1.5rem;
-  color: #856404;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f0f0f0;
 }
 
-.error-icon {
-  font-size: 2rem;
+.solution-header h2 {
+  font-size: 1.5rem;
+  color: #333;
 }
 
 .problem-type {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  background: white;
-  border-radius: 10px;
-}
-
-.type-label {
-  font-weight: 600;
-  color: #666;
-}
-
-.type-value {
-  padding: 0.3rem 1rem;
+  padding: 0.5rem 1rem;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-.steps-container {
-  margin: 2rem 0;
-}
-
-.steps-title {
-  font-size: 1.3rem;
-  color: #333;
-  margin-bottom: 1rem;
-}
-
-.step {
-  background: white;
-  border-left: 4px solid #667eea;
-  border-radius: 10px;
-  padding: 1.5rem;
-  margin-bottom: 1rem;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.step:hover {
-  transform: translateX(5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.step-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 0.8rem;
-}
-
-.step-number {
-  background: #667eea;
-  color: white;
-  padding: 0.3rem 0.8rem;
   border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 600;
 }
 
-.step-label {
-  font-weight: 600;
-  color: #555;
+.solution-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.solution-step {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.solution-step:hover {
+  background: #e9ecef;
+  transform: translateX(4px);
+}
+
+.step-number {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.step-content {
+  flex: 1;
 }
 
 .step-formula {
-  background: #f0f0f0;
-  padding: 1rem;
-  border-radius: 8px;
   font-family: 'Courier New', monospace;
   font-size: 1.1rem;
-  margin: 0.8rem 0;
   color: #333;
-  overflow-x: auto;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
 }
 
 .step-explanation {
   color: #666;
+  font-size: 0.95rem;
   line-height: 1.6;
-  margin-top: 0.5rem;
 }
 
 .final-answer {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  margin-top: 1rem;
   padding: 1.5rem;
-  border-radius: 15px;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 2rem;
-  font-size: 1.2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  text-align: center;
 }
 
 .answer-label {
-  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .answer-value {
-  font-family: 'Courier New', monospace;
-  font-size: 1.4rem;
+  color: white;
+  font-size: 1.8rem;
   font-weight: 700;
+  font-family: 'Courier New', monospace;
 }
 
 @media (max-width: 768px) {
@@ -153,22 +120,13 @@
     padding: 1.5rem;
   }
 
-  .solution-title {
-    font-size: 1.5rem;
-  }
-
-  .step {
-    padding: 1rem;
-  }
-
-  .step-header {
+  .solution-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
   }
 
-  .final-answer {
-    flex-direction: column;
-    align-items: flex-start;
+  .answer-value {
+    font-size: 1.5rem;
   }
 }

@@ -5,11 +5,8 @@ const Header = () => {
   return (
     <header className="header">
       <div className="header-content">
-        <div className="logo">
-          <span className="logo-icon">∑</span>
-          <h1>Math Problem Solver</h1>
-        </div>
-        <p className="tagline">Step-by-step solutions for all difficulty levels</p>
+        <h1 className="header-title">🧮 数学题解答器</h1>
+        <p className="header-subtitle">输入数学问题，获取详细的分步解答</p>
       </div>
     </header>
   )

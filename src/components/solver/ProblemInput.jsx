@@ -1,43 +1,49 @@
 import React from 'react'
 import './ProblemInput.css'
 
-const ProblemInput = ({ problem, onProblemChange, onSolve, onClear }) => {
+const ProblemInput = ({ problem, onChange, onSolve, onClear }) => {
   const examples = [
-    '2x + 5 = 15',
+    '2x + 5 = 13',
     'x^2 - 5x + 6 = 0',
     '3/4 + 2/3',
-    '15% of 200',
-    '(3 + 5) * 2 - 4'
+    '25% of 80',
+    '123 + 456'
   ]
 
+  const handleExampleClick = (example) => {
+    onChange(example)
+  }
+
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
+    if (e.key === 'Enter' && e.ctrlKey) {
       onSolve()
     }
   }
 
   return (
-    <div className="problem-input">
-      <label htmlFor="problem">Enter Your Math Problem:</label>
+    <div className="problem-input-container">
+      <div className="input-header">
+        <h2>输入问题</h2>
+        <span className="input-hint">支持方程、算术、分数、百分比等</span>
+      </div>
+
       <textarea
-        id="problem"
+        className="problem-input"
         value={problem}
-        onChange={(e) => onProblemChange(e.target.value)}
+        onChange={(e) => onChange(e.target.value)}
         onKeyPress={handleKeyPress}
-        placeholder="e.g., 2x + 5 = 15 or x^2 - 4x + 4 = 0"
-        rows="3"
+        placeholder="例如: 2x + 5 = 13 或 x^2 - 5x + 6 = 0"
+        rows="4"
       />
-      
-      <div className="examples">
-        <span className="examples-label">Examples:</span>
-        <div className="examples-list">
+
+      <div className="examples-section">
+        <p className="examples-title">示例问题：</p>
+        <div className="examples-grid">
           {examples.map((example, index) => (
             <button
               key={index}
-              className="example-btn"
-              onClick={() => onProblemChange(example)}
-              title="Click to use this example"
+              className="example-button"
+              onClick={() => handleExampleClick(example)}
             >
               {example}
             </button>
@@ -45,14 +51,16 @@ const ProblemInput = ({ problem, onProblemChange, onSolve, onClear }) => {
         </div>
       </div>
 
-      <div className="button-group">
-        <button className="solve-btn" onClick={onSolve}>
-          Solve Problem
+      <div className="input-actions">
+        <button className="solve-button" onClick={onSolve}>
+          <span>🚀</span> 解答问题
         </button>
-        <button className="clear-btn" onClick={onClear}>
-          Clear
+        <button className="clear-button" onClick={onClear}>
+          <span>🗑️</span> 清除
         </button>
       </div>
+
+      <p className="keyboard-hint">💡 提示：按 Ctrl + Enter 快速解答</p>
     </div>
   )
 }

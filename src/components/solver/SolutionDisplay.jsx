@@ -6,42 +6,27 @@ const SolutionDisplay = ({ solution }) => {
 
   return (
     <div className="solution-display">
-      <h2 className="solution-title">Solution</h2>
-      
-      {solution.error ? (
-        <div className="error-message">
-          <span className="error-icon">⚠️</span>
-          <p>{solution.error}</p>
+      <div className="solution-header">
+        <h2>解答过程</h2>
+        <span className="problem-type">{solution.type}</span>
+      </div>
+
+      <div className="solution-content">
+        {solution.steps.map((step, index) => (
+          <div key={index} className="solution-step">
+            <div className="step-number">{index + 1}</div>
+            <div className="step-content">
+              <div className="step-formula">{step.formula}</div>
+              <div className="step-explanation">{step.explanation}</div>
+            </div>
+          </div>
+        ))}
+
+        <div className="final-answer">
+          <div className="answer-label">最终答案</div>
+          <div className="answer-value">{solution.answer}</div>
         </div>
-      ) : (
-        <>
-          <div className="problem-type">
-            <span className="type-label">Problem Type:</span>
-            <span className="type-value">{solution.type}</span>
-          </div>
-
-          <div className="steps-container">
-            <h3 className="steps-title">Step-by-Step Solution:</h3>
-            {solution.steps.map((step, index) => (
-              <div key={index} className="step">
-                <div className="step-header">
-                  <span className="step-number">Step {index + 1}</span>
-                  <span className="step-label">{step.label}</span>
-                </div>
-                {step.formula && (
-                  <div className="step-formula">{step.formula}</div>
-                )}
-                <div className="step-explanation">{step.explanation}</div>
-              </div>
-            ))}
-          </div>
-
-          <div className="final-answer">
-            <span className="answer-label">Final Answer:</span>
-            <span className="answer-value">{solution.answer}</span>
-          </div>
-        </>
-      )}
+      </div>
     </div>
   )
 }
