@@ -31,7 +31,7 @@ function Header() {
 
         <nav className={`nav ${isMenuOpen ? 'active' : ''}`}>
           <ul>
-            <li><a onClick={() => scrollToSection('hero')}>首页</a></li>
+            <li><a onClick={() => scrollToSection('hero')}>首页123</a></li>
             <li><a onClick={() => scrollToSection('about')}>关于</a></li>
             <li><a onClick={() => scrollToSection('skills')}>技能</a></li>
             <li><a onClick={() => scrollToSection('projects')}>项目</a></li>
